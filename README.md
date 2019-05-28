@@ -24,10 +24,10 @@ MovieRec is a micro-service that wraps-up a REST API on top of a recommendation 
        - 3-fold cross-validation.
        - Hyper-parameter tuning using grid search ('n_factors': [10, 30, 50], 'n_epochs': [10, 30, 50], 'lr_all': [0.002, 0.005, 0.008, 0.01], and 'reg_all': [0.2, 0.4, 0.6, 0.8]).
        - RMSE and MAE for evaluation.
-       - We choose parameters from the variant with the best RMSE score. The chosen parameters are then provided to the configuration of the production implementation.
+       - Choose parameters from the variant with the best RMSE score. The chosen parameters are then provided to the configuration of the production implementation.
   
-  - In PostgreSQL we are keeping user, ratings and movie information. 
-  - In Redis we are keeping the following information which is periodically or live updated:
+  - PostgreSQL keeps user, ratings and movie information. 
+  - Redis keeps the following information which is periodically or live updated:
   
       - The top-N recommentations of each user, as they have been computed by the SVD algorithm. The number of recommendations is configurable, default is 20. The computation is periodically triggered every 15 minutes.
       - Movie statistics, which are periodically computed (every 30 minutes).
@@ -39,7 +39,7 @@ MovieRec is a micro-service that wraps-up a REST API on top of a recommendation 
       - Sets the average rating of the movie, if such value exists in Redis, otherwise
       - when average does not exists, MovieRec set 3.5 stars as a default rating of the movie.
 
-  - To deal with user cold-start problem, that is when we have a new user and thus we do not know anything regarding his/her movie interests,
+  - To deal with user cold-start problem, that is when a new user appears and thus we do not know anything regarding his/her movie interests,
   MovieRec recommends the top movies that exists in the database. Specifically, this is a list of movies which are popular and high rated --- i.e., the count of users rated/watched and average rating, sorted in descending order.
   - Since the recommendations are periodically updated, it may be possible that within that period of time a user to mark as watched or rate a movie that is recommended. In such case the service will not re-recommend the same movie and will fill the missing one(s) by recommending top movies, like the solution for the cold-start problem, but by filtering out the movies that the user watched/rated.
 
