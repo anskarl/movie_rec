@@ -1,6 +1,6 @@
 FROM python:3.6
 
-RUN pip install --no-cache-dir requests==2.19.1 \
+RUN pip install --no-cache-dir requests==2.22.0 \
     && pip install --no-cache-dir scipy==1.1.0 \
     && pip install --no-cache-dir numpy==1.14.6 \
     && pip install --no-cache-dir Cython==0.28.5 \
