@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  redis:
+    restart: always
+    image: redis:4.0-alpine
+    ports:
+      - 6379:6379
+    
+  postgres:
+    restart: always
+    build: 
+      context: ./postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=movierec
+      - POSTGRES_PASSWORD=movierec
+
+  movierec:
+    restart: always
+    build: 
+      context: ./web
+    links:
+      - postgres
+      - redis
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=movierec
+      - DB_PASS=movierec
+      - DB_PORT=5432
+      - APP_SETTINGS=config.DevelopmentConfig
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - 8000:8000
+    depends_on:
+      - redis
+      - postgres
+    command: ["./wait-for-it.sh", "postgres:5432", "--", "gunicorn","-w", "1", "-b", ":8000", "service:app"]
